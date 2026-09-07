@@ -4,7 +4,7 @@ import type {Offer} from './policy.ts';
 export class KoraClient{
  baseURL:string;token:string;
  constructor(baseURL:string,token:string){this.baseURL=baseURL;this.token=token;}
- async request<T>(path:string,body?:unknown):Promise<T>{const r=await fetch(this.baseURL+'/v1/'+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+this.token,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const result=await r.json();if(!r.ok)throw new Error(result.error);return result;}
+ async request<T>(path:string,body?:unknown):Promise<T>{const r=await fetch(this.baseURL+'/v1/'+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+this.token,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});if(!r.ok){const {error}=await r.json() as {error?:string;retryable?:boolean};throw new Error(error??'HTTP_'+r.status);}return await r.json() as T;}
  graph(){return this.request<Graph>('graph');}
  analyze(question:Question){return this.request<Run>('runs',question);}
  offers(){return this.request<Offer[]>('offers');}

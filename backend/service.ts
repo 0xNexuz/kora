@@ -3,7 +3,7 @@ import {verifyMessage} from 'viem';
 import type {Hex,Address} from 'viem';
 import {Store} from './store.ts';
 import {fixture,ensure,hash,OWNER,CHAIN} from './domain.ts';
-import type {Graph,Run,Question} from './domain.ts';
+import type {Graph,Run} from './domain.ts';
 import {analyze,validateAgentIntent} from './skills.ts';
 import {issueOffer,authorizeOffer,approvalMessage} from './policy.ts';
 import type {Offer} from './policy.ts';

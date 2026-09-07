@@ -1,5 +1,6 @@
 'use client';
 import {useEffect,useRef} from 'react';
+import Image from 'next/image';
 import {FileCheck2,ChartNoAxesCombined,ArrowLeftRight,Waypoints} from 'lucide-react';
 import './kora-hero-illustration.css';
 
@@ -14,7 +15,7 @@ export default function KoraHeroIllustration({paused}:{paused:boolean}){
  return <div ref={scene} className="kora-mascot-scene" role="img" aria-label="Three sculptural Kora mascots representing financial intelligence, operations and capital" data-paused={paused}>
  <div className="mascot-orbit mascot-orbit-outer" aria-hidden="true"/><div className="mascot-orbit mascot-orbit-inner" aria-hidden="true"/>
  <span className="mascot-index" aria-hidden="true">THREE SYSTEMS. ONE FINANCIAL MIND.</span>
- {mascots.map(m=><div key={m.key} className={`mascot-position mascot-${m.key}`} aria-hidden="true"><div className="mascot-parallax"><div className="mascot-float"><img src={m.image} alt="" width={1024} height={1024} decoding="async" draggable={false}/></div></div><span className="mascot-name">{m.label}</span></div>)}
+ {mascots.map(m=><div key={m.key} className={`mascot-position mascot-${m.key}`} aria-hidden="true"><div className="mascot-parallax"><div className="mascot-float"><Image src={m.image} alt="" width={1024} height={1024} decoding="async" draggable={false}/></div></div><span className="mascot-name">{m.label}</span></div>)}
  <div className="financial-fragment fragment-invoice" aria-hidden="true"><FileCheck2 size={19}/><span>INVOICE<br/><b>RECONCILED</b></span></div>
  <div className="financial-fragment fragment-flow" aria-hidden="true"><ChartNoAxesCombined size={20}/><span>CASH FLOW<br/><b>CONNECTED</b></span></div>
  <div className="financial-fragment fragment-settlement" aria-hidden="true"><ArrowLeftRight size={18}/><span>SETTLEMENT</span></div>
