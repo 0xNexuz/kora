@@ -1,0 +1,30 @@
+import {createPublicClient,http,encodeFunctionData,encodeDeployData,decodeEventLog,decodeFunctionData,erc20Abi,getAddress} from 'viem';
+import type {Address,Hex} from 'viem';
+import {baseSepolia} from 'viem/chains';
+import {readFileSync} from 'node:fs';
+import {CHAIN,USDC,ensure} from './domain.ts';
+import type {Offer} from './policy.ts';
+export const artifact=()=>JSON.parse(readFileSync(new URL('./artifacts/KoraFacility.json',import.meta.url),'utf8'));
+export const rpc=createPublicClient({chain:baseSepolia,transport:http(process.env.KORA_RPC_URL??'https://sepolia.base.org',{timeout:15000,retryCount:1})});
+export function terms(o:Offer){return {id:o.id as Hex,business:o.businessCommitment as Hex,obligation:o.obligationCommitment as Hex,evidence:o.evidenceCommitment as Hex,borrower:o.borrower as Address,principal:BigInt(o.principal),fee:BigInt(o.fee),dueAt:BigInt(o.dueAt),expiresAt:BigInt(o.expiresAt)};}
+export function deployment(owner:string){return {from:owner,chainId:CHAIN,data:encodeDeployData({abi:artifact().abi,bytecode:artifact().bytecode,args:[USDC,owner]}),value:'0x0',purpose:'Deploy testnet Kora facility; lender and borrower are the same demo wallet.'};}
+export function transaction(o:Offer,action:'allowance'|'register'|'draw'|'repay',amount?:string){ensure(o.contract,'CONTRACT_NOT_DEPLOYED');let to=o.contract,data:Hex;const remaining=BigInt(o.principal)+BigInt(o.fee)-BigInt(o.repaid);
+ if(action==='allowance'){to=USDC;data=encodeFunctionData({abi:erc20Abi,functionName:'approve',args:[o.contract as Address,o.status==='DRAWN'?remaining:BigInt(o.principal)]});}
+ else if(action==='register'){ensure(o.status==='APPROVED','HUMAN_APPROVAL_REQUIRED');data=encodeFunctionData({abi:artifact().abi,functionName:'register',args:[terms(o)]});}
+ else if(action==='draw'){ensure(o.status==='REGISTERED','INVALID_STATE');data=encodeFunctionData({abi:artifact().abi,functionName:'draw',args:[o.id]});}
+ else {ensure(o.status==='DRAWN','INVALID_STATE');ensure(typeof amount==='string'&&/^[1-9][0-9]*$/.test(amount),'INVALID_AMOUNT');ensure(BigInt(amount)<=remaining,'EXCESSIVE_REPAYMENT');data=encodeFunctionData({abi:artifact().abi,functionName:'repay',args:[o.id,BigInt(amount)]});}
+ return {from:o.borrower,to,data,value:'0x0',chainId:CHAIN,action,offerId:o.id};
+}
+export async function network(){ensure(await rpc.getChainId()===CHAIN,'WRONG_CHAIN');}
+export async function inspectWallet(address:string){await network();const [gas,usdc]=await Promise.all([rpc.getBalance({address:address as Address}),rpc.readContract({address:USDC,abi:erc20Abi,functionName:'balanceOf',args:[address as Address]})]);return {chainId:CHAIN,wallet:address,gasWei:gas.toString(),usdcAtomic:usdc.toString(),token:USDC};}
+async function confirmed(txHash:Hex){await network();const receipt=await rpc.getTransactionReceipt({hash:txHash});ensure(receipt.status==='success','TRANSACTION_FAILED');const latest=await rpc.getBlockNumber();ensure(latest>=receipt.blockNumber+1n,'INSUFFICIENT_CONFIRMATIONS');const block=await rpc.getBlock({blockNumber:receipt.blockNumber});ensure(block.hash===receipt.blockHash,'REORG_DETECTED');return {receipt,block};}
+export async function verifyDeployment(txHash:Hex,owner:string){const {receipt}=await confirmed(txHash);const tx=await rpc.getTransaction({hash:txHash});ensure(tx.from.toLowerCase()===owner.toLowerCase()&&tx.to===null&&tx.input===deployment(owner).data,'INVALID_DEPLOYMENT');ensure(receipt.contractAddress,'MISSING_CONTRACT');const address=receipt.contractAddress;ensure((await rpc.readContract({address,abi:artifact().abi,functionName:'lender'}) as string).toLowerCase()===owner.toLowerCase(),'WRONG_LENDER');ensure((await rpc.readContract({address,abi:artifact().abi,functionName:'usdc'}) as string).toLowerCase()===USDC,'WRONG_TOKEN');return {chainId:CHAIN,address,transactionHash:txHash,blockNumber:receipt.blockNumber.toString(),blockHash:receipt.blockHash,explorer:'https://sepolia.basescan.org/tx/'+txHash,status:'REAL — TESTNET'};}
+export async function verifyReceipt(o:Offer,txHash:Hex){ensure(o.contract,'MISSING_CONTRACT');const {receipt,block}=await confirmed(txHash);const tx=await rpc.getTransaction({hash:txHash});ensure(tx.to?.toLowerCase()===o.contract.toLowerCase()&&tx.from.toLowerCase()===o.borrower,'WRONG_TRANSACTION');
+ const logs=receipt.logs.filter(l=>l.address.toLowerCase()===o.contract!.toLowerCase()).map(l=>decodeEventLog({abi:artifact().abi,data:l.data,topics:l.topics})) as unknown as {eventName:string;args:Record<string,unknown>}[];
+ const log=logs.find(l=>['Registered','Drawn','Repaid'].includes(l.eventName)&&l.args.id===o.id);ensure(log,'UNSUPPORTED_RECEIPT');
+ const decoded=decodeFunctionData({abi:artifact().abi,data:tx.input});
+ if(log.eventName==='Registered'){ensure(o.status==='APPROVED','INVALID_STATE');ensure(tx.input===transaction(o,'register').data,'TERMS_MODIFIED');ensure(log.args.evidence===o.evidenceCommitment&&log.args.principal===BigInt(o.principal)&&log.args.fee===BigInt(o.fee),'TERMS_MODIFIED');}
+ if(log.eventName==='Drawn'){ensure(o.status==='REGISTERED','INVALID_STATE');ensure(tx.input===transaction(o,'draw').data&&log.args.amount===BigInt(o.principal),'TERMS_MODIFIED');}
+ if(log.eventName==='Repaid'){ensure(o.status==='DRAWN'&&decoded.functionName==='repay','INVALID_STATE');const amount=log.args.amount as bigint,total=log.args.total as bigint;ensure(amount>0n&&total===BigInt(o.repaid)+amount&&total<=BigInt(o.principal)+BigInt(o.fee),'REPAYMENT_MISMATCH');}
+ return {id:CHAIN+':'+txHash+':'+log.eventName,offerId:o.id,event:log.eventName,amount:String(log.args.amount??log.args.principal),total:String(log.args.total??0),complete:log.args.complete===true,transactionHash:txHash,blockNumber:receipt.blockNumber.toString(),blockHash:receipt.blockHash,chainId:CHAIN,contract:o.contract,token:USDC,timestamp:Number(block.timestamp),explorer:'https://sepolia.basescan.org/tx/'+txHash,status:'REAL — TESTNET' as const};
+}
