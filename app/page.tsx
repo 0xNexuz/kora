@@ -3,6 +3,7 @@ import './agent-tools';
 import Link from 'next/link';
 import {useEffect, useRef, useState} from 'react';
 import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
+import KoraHeroIllustration from '@/components/kora-hero-illustration';
 import {
   probe,
   signIn,
@@ -275,22 +276,7 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="art">
-              <div
-                className="portrait"
-                role="img"
-                aria-label="Kora portrait dissolving into financial data"
-              />
-              <div className="parallax">
-                <div className="orbit one" />
-                <div className="orbit two" />
-              </div>
-              <span className="tag">01 — CASH FLOW</span>
-              <span className="star">✳</span>
-              <span className="caption">
-                FRAGMENTED DATA → CONNECTED POSSIBILITIES
-              </span>
-            </div>
+              <KoraHeroIllustration paused={paused} />
           </div>
           <div className="ticker" aria-hidden="true">
             <div>

@@ -13,7 +13,7 @@ This repository contains work in progress, not a production financial service.
 - **SIMULATED:** Ada's Pharmacy cash flows, sales assumptions, financing need and NGN/USDC conversion assumptions. No real customer or traction is represented.
 - **IMPLEMENTED, not deployed:** Solidity financing contract and Base Sepolia transaction preparation/receipt verification. No real testnet deployment, financing or repayment is claimed by this snapshot.
 - **PLANNED:** Full end-to-end integration, automated security suite, production authorization/key management, live business connectors and hosted backend.
-- **HERO IN PROGRESS:** Floating mascot component and generated concepts are included, but the current page still shows the original hero. Concepts are archived under `design/mascot-concepts` pending selection and integration.
+- **HERO IMPLEMENTED:** Three floating Kora mascots replace the original portrait, with desktop pointer parallax, independent animation timing, pause controls and reduced-motion support. Original concepts are archived under `design/mascot-concepts`.
 
 The frontend built successfully before the latest backend additions. The combined snapshot has not yet passed a complete build, typecheck or security audit. Dependency audit findings remain to be triaged.
 
