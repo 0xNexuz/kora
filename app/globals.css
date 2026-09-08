@@ -44,3 +44,11 @@ details[open] p,details[open] small{animation:fadeup .4s cubic-bezier(.22,.61,.3
 .ticker:hover>div{animation-play-state:paused}
 @keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgb(76 138 88/.45)}50%{box-shadow:0 0 0 6px rgb(76 138 88/0)}}
+.workspace-head .head-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.connect{border-radius:5px;background:#e85d30;color:#171e16;padding:9px 14px;font-size:12px;white-space:nowrap;transition:transform .2s,background .2s}
+.connect:hover{background:#ee744a;transform:translateY(-1px)}
+.connect:active{transform:scale(.97)}
+.connect.on{background:#242e25;color:#f4eedf}
+.connect:disabled{opacity:.6}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:rgb(98 106 89/.5);margin-right:8px;vertical-align:1px}
+.note.err{color:#9e412c}

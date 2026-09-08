@@ -20,7 +20,7 @@ export interface HandlerOptions {
 // injectable so the HTTP layer can be exercised without a network or port.
 export function createHandler(store: Store, service: Service, opts: HandlerOptions = {}) {
   const allowedHosts = opts.allowedHosts ?? ['localhost:4001', '127.0.0.1:4001'];
-  const allowed = new Set(opts.allowedOrigins ?? ['http://localhost:3000', 'http://localhost:4001', 'http://127.0.0.1:4001']);
+  const allowed = new Set(opts.allowedOrigins ?? ['http://localhost:3000', 'http://localhost:4001', 'http://127.0.0.1:4001', 'http://localhost:5173', 'http://127.0.0.1:5173']);
   const rateLimit = opts.rateLimit ?? 120;
   const wallet = opts.wallet ?? (async (address: string) => inspectWallet(address));
   const rate = new Map<string, { at: number; count: number }>();
@@ -73,6 +73,7 @@ export function createHandler(store: Store, service: Service, opts: HandlerOptio
       service.session(token);
       if (path === '/v1/config' && req.method === 'GET') return send({ owner: OWNER, chainId: CHAIN, deployment: store.get('deployment', 'active'), mode: 'DEMO_BUSINESS_REAL_TESTNET_SETTLEMENT' });
       if (path === '/v1/graph' && req.method === 'GET') return send(service.graph());
+      if (path === '/v1/account' && req.method === 'GET') return send(service.account());
       if (path === '/v1/skills' && req.method === 'GET') return send(Object.keys(SKILLS).map(name => ({ name, version: '1.0.0', readOnly: true, input: 'SkillContext', error: 'KoraError.code' })));
       if (path === '/v1/runs' && req.method === 'POST') return send(service.run(body));
       if (path === '/v1/runs' && req.method === 'GET') return send(store.list('run'));
@@ -109,7 +110,8 @@ export function createDefaultStore() {
 const isMain = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) {
   const store = createDefaultStore();
-  const service = new Service(store);
+  const owner = process.env.KORA_OWNER?.trim() || OWNER;
+  const service = new Service(store, owner);
   const server = createServer(createHandler(store, service));
   server.listen(4001, '127.0.0.1', () => console.log('Kora private local API: http://localhost:4001/approval'));
 }

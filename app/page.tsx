@@ -3,6 +3,15 @@ import './agent-tools';
 import Link from 'next/link';
 import {useEffect, useRef, useState} from 'react';
 import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
+import {
+  probe,
+  signIn,
+  fetchAccount,
+  shortAddress,
+  friendlyError,
+  type Session,
+  type KoraAccount,
+} from '@/lib/kora';
 
 const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
 const INFLOW = [48, 62, 55, 77, 66, 91];
@@ -71,7 +80,13 @@ export default function Home() {
   const [ai, setAi] = useState(false);
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
+  const [online, setOnline] = useState<boolean | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [account, setAccount] = useState<KoraAccount | null>(null);
+  const [connecting, setConnecting] = useState(false);
+  const [connectMsg, setConnectMsg] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const SESSION_KEY = 'kora.session';
 
   useEffect(() => {
     document.documentElement.classList.add('js');
@@ -152,6 +167,60 @@ export default function Home() {
       cancelAnimationFrame(raf);
     };
   }, []);
+
+  useEffect(() => {
+    let live = true;
+    void (async () => {
+      const p = await probe();
+      if (!live) return;
+      setOnline(p.online);
+      if (!p.online) return;
+      const saved = localStorage.getItem(SESSION_KEY);
+      if (!saved) return;
+      try {
+        const s = JSON.parse(saved) as Session;
+        const a = await fetchAccount(s.token);
+        if (!live) return;
+        setSession(s);
+        setAccount(a);
+      } catch {
+        localStorage.removeItem(SESSION_KEY);
+      }
+    })();
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  const connect = async () => {
+    setConnecting(true);
+    setConnectMsg(null);
+    try {
+      const s = await signIn();
+      localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+      setSession(s);
+      setAccount(await fetchAccount(s.token));
+    } catch (e) {
+      setConnectMsg(friendlyError(String((e as Error).message), online));
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const signOut = () => {
+    localStorage.removeItem(SESSION_KEY);
+    setSession(null);
+    setAccount(null);
+  };
+
+  const noteText =
+    session && account
+      ? `Signed in as ${shortAddress(account.address)}. Persisted demo account on the Kora local API — graph v${account.graphVersion}, ${account.runs} analyses, ${account.offers} offers, ${account.receipts} receipts on record. No real money moved.`
+      : connectMsg
+        ? connectMsg
+        : online === false
+          ? 'Backend offline at localhost:4001 — the demo runs in your browser this session only.'
+          : 'Sample data · Changes last for this session only. Live payments and AI connections are not enabled.';
 
   return (
     <>
@@ -289,10 +358,23 @@ export default function Home() {
             <div className="workspace-head">
               <b className="logo">kora ✳</b>
               <span>Ade & Co. / Lagos, NG</span>
-              <small>
-                <i className="pulse" aria-hidden="true" />
-                SAMPLE BUSINESS DATA
-              </small>
+              <div className="head-right">
+                <button
+                  className={session ? 'connect on' : 'connect'}
+                  onClick={session ? signOut : connect}
+                  disabled={connecting}
+                >
+                  {connecting ? 'Connecting…' : session ? 'Synced' : 'Connect wallet'}
+                </button>
+                <small>
+                  <i className={session ? 'pulse' : 'dot'} aria-hidden="true" />
+                  {session
+                    ? shortAddress(session.address) + ' · 84532'
+                    : online === false
+                      ? 'DEMO · OFFLINE'
+                      : 'SAMPLE BUSINESS DATA'}
+                </small>
+              </div>
             </div>
             <Tabs defaultValue="overview">
               <TabsList variant="line" className="tabs">
@@ -393,9 +475,7 @@ export default function Home() {
                 ))}
               </TabsContent>
             </Tabs>
-            <p className="note">
-              Sample data · Changes last for this session only. Live payments and AI connections are not enabled.
-            </p>
+            <p className={connectMsg ? 'note err' : 'note'}>{noteText}</p>
           </div>
         </section>
 

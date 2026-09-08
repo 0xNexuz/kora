@@ -322,4 +322,28 @@ describe('HTTP layer', () => {
     assert.equal(receipts.status, 200);
     assert.equal((receipts.body as unknown as unknown[]).length, 0);
   });
+
+  test('account persists a synced demo profile on first access', async () => {
+    const token = await authenticate();
+    const a1 = await call('/v1/account', { token });
+    assert.equal(a1.status, 200);
+    assert.equal(String(a1.body.address).toLowerCase(), account.address.toLowerCase());
+    assert.equal(a1.body.graphId, 'adas-pharmacy');
+    assert.equal(a1.body.graphVersion, 1);
+    assert.ok(Number(a1.body.createdAt) > 0);
+    assert.ok(Number(a1.body.lastSeenAt) >= Number(a1.body.createdAt));
+
+    const a2 = await call('/v1/account', { token });
+    assert.equal(a2.status, 200);
+    assert.equal(a2.body.createdAt, a1.body.createdAt);
+    const runsList = await call('/v1/runs', { token });
+    assert.equal(a2.body.runs, (runsList.body as unknown as unknown[]).length);
+    assert.ok(Number(a2.body.lastSeenAt) >= Number(a1.body.lastSeenAt));
+  });
+
+  test('account is protected and requires a session', async () => {
+    const { status, body } = await call('/v1/account');
+    assert.equal(status, 401);
+    assert.equal(body.error, 'UNAUTHORIZED');
+  });
 });
