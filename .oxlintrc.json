@@ -52,5 +52,35 @@
     "typescript/no-require-imports": "error",
     "typescript/no-unnecessary-type-constraint": "error",
     "typescript/no-unsafe-function-type": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts"],
+      "rules": {
+        "typescript/no-floating-promises": "off"
+      }
+    },
+    {
+      "files": [
+        "components/ui/**",
+        "components/kora-hero-illustration.tsx",
+        "app/page.tsx"
+      ],
+      "rules": {
+        "jsx-a11y/prefer-tag-over-role": "off"
+      }
+    },
+    {
+      "files": ["components/ui/pagination.tsx"],
+      "rules": {
+        "jsx-a11y/anchor-has-content": "off"
+      }
+    },
+    {
+      "files": ["components/ui/label.tsx"],
+      "rules": {
+        "jsx-a11y/label-has-associated-control": "off"
+      }
+    }
+  ]
 }

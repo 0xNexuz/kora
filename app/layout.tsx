@@ -27,6 +27,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script dangerouslySetInnerHTML={{__html: "document.documentElement.classList.add('js')"}} />
         {children}
       </body>
     </html>
