@@ -15,7 +15,8 @@
 |---|---|---|
 | Public repository | VERIFIED | https://github.com/0xNexuz/kora |
 | Live app | VERIFIED | https://kora-weld-two.vercel.app |
-| Core demo | PARTIAL | Local UI/API/contract console |
+| Public browser demo | VERIFIED BUILD | Backend-independent workspace; wallet optional and demo-only |
+| Full finance loop | PARTIAL | Local API/contract console; public settlement evidence missing |
 | Base network deployment | P0 MISSING | Execute Sepolia lifecycle |
 | Architecture and security | VERIFIED DOCUMENTED | this harness |
 | Application confirmation | UNVERIFIED | founder must submit/confirm |

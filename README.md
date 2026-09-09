@@ -10,7 +10,7 @@ Live frontend: https://kora-weld-two.vercel.app
 
 This repository contains work in progress, not a production financial service.
 
-- **DEMO:** Existing landing page and workspace use fictional business data. The workspace now also offers an optional, explicitly labeled wallet sign-in ("Connect wallet") that exercises the local API — challenge, EIP-191 signature, session and a persisted demo account. It degrades to the in-browser demo if the local API is offline.
+- **PUBLIC DEMO:** The landing page and interactive workspace use fictional business data and work entirely in the browser. No account, backend or wallet is required. Any visitor with an injected browser wallet can optionally connect it; the public demo does not request a signature, submit a transaction or move funds.
 - **VERIFIED — LOCAL:** Local encrypted SQLite store, financial graph, twelve financial skills, scenario analysis, evidence-backed recommendations, policy checks, approval API and wallet signing console. On 2026-09-08, typecheck, lint, production build and 79 tests passed.
 - **SIMULATED:** Ada's Pharmacy cash flows, sales assumptions, financing need and NGN/USDC conversion assumptions. No real customer or traction is represented.
 - **IMPLEMENTED, not deployed:** Solidity financing contract and Base Sepolia transaction preparation/receipt verification. No real testnet deployment, financing or repayment is claimed by this snapshot.
@@ -41,19 +41,17 @@ Backend/signing console: http://localhost:4001/approval
 
 The signing console requires a connected browser wallet on Base Sepolia (chain ID 84532). The development policy currently restricts authorization to `0x7034aF41397893321c4458ABB3B98F6c67065FaB`. Do not use mainnet funds. The current same-wallet lender/borrower flow is a self-funded testnet demonstration, not third-party financing.
 
-### Workspace wallet sign-in demo
+### Public workspace and wallet connection
 
-The landing page's "Connect wallet" button proves the backend round trip (challenge → wallet signature → session → persisted `/v1/account`). The page reads the expected owner and chain from the challenge response, so any `KORA_OWNER` works.
+Open the workspace and use Overview, Invoices and Suppliers immediately. Ask Kora for the rule-backed insight, mark the fictional invoice paid and watch the sample receivables update. These changes last only for the browser session.
 
-1. Create or select a disposable test-only browser wallet and add Base Sepolia (chain ID `84532`, RPC `https://sepolia.base.org`). Never paste a seed phrase or private key into Kora.
-2. Start the backend with that public wallet address as owner:
+The optional **Connect wallet** control accepts any account exposed by an injected browser wallet. It only reads the selected public address and current chain so visitors can see how wallet-aware Kora will feel. A wallet on any chain can connect to the public simulation; Base Sepolia is shown by name when chain ID `84532` is selected. Wallets remain controlled by their wallet application, and clearing the wallet in Kora does not disconnect the extension globally.
 
-   ```powershell
-   $env:KORA_OWNER = "0xYOUR_TEST_WALLET_ADDRESS"
-   node --experimental-transform-types backend/server.ts
-   ```
+The restricted challenge/signature flow and real transaction preparation remain in the separate local operator console at `http://localhost:4001/approval`. To exercise that path, start the backend with a disposable test-only public address in `KORA_OWNER`, use Base Sepolia and never paste a seed phrase or private key into Kora. It is not part of the public visitor demo.
 
-3. `npm run dev`, open the workspace and click "Connect wallet". Select the demo wallet in the signature prompt. The header flips to the connected address and the footnote shows the persisted account counts. Use your own address instead by setting `KORA_OWNER` to it.
+### Vercel deployment
+
+Import `https://github.com/0xNexuz/kora` into Vercel, keep the detected Next.js settings and deploy. No environment variable is required for the public browser demo. Only set `NEXT_PUBLIC_KORA_API_URL` when a separately hosted, allowlisted Kora backend exists; do not point a public deployment at `localhost`.
 
 ## Structure
 

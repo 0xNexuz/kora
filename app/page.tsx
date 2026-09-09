@@ -5,13 +5,11 @@ import {useEffect, useRef, useState} from 'react';
 import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
 import KoraHeroIllustration from '@/components/kora-hero-illustration';
 import {
-  probe,
-  signIn,
-  fetchAccount,
+  connectWallet,
+  restoreWallet,
   shortAddress,
   friendlyError,
-  type Session,
-  type KoraAccount,
+  type ConnectedWallet,
 } from '@/lib/kora';
 
 const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
@@ -91,13 +89,10 @@ export default function Home() {
   const [ai, setAi] = useState(false);
   const [active, setActive] = useState('');
   const [scrolled, setScrolled] = useState(false);
-  const [online, setOnline] = useState<boolean | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [account, setAccount] = useState<KoraAccount | null>(null);
+  const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [connectMsg, setConnectMsg] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const SESSION_KEY = 'kora.session';
 
   useEffect(() => {
     document.documentElement.classList.add('js');
@@ -181,25 +176,19 @@ export default function Home() {
 
   useEffect(() => {
     let live = true;
-    void (async () => {
-      const p = await probe();
-      if (!live) return;
-      setOnline(p.online);
-      if (!p.online) return;
-      const saved = localStorage.getItem(SESSION_KEY);
-      if (!saved) return;
+    const syncWallet = () => void (async () => {
       try {
-        const s = JSON.parse(saved) as Session;
-        const a = await fetchAccount(s.token);
-        if (!live) return;
-        setSession(s);
-        setAccount(a);
-      } catch {
-        localStorage.removeItem(SESSION_KEY);
-      }
+        const restored = await restoreWallet();
+        if (live) setWallet(restored);
+      } catch {}
     })();
+    syncWallet();
+    window.ethereum?.on?.('accountsChanged', syncWallet);
+    window.ethereum?.on?.('chainChanged', syncWallet);
     return () => {
       live = false;
+      window.ethereum?.removeListener?.('accountsChanged', syncWallet);
+      window.ethereum?.removeListener?.('chainChanged', syncWallet);
     };
   }, []);
 
@@ -207,31 +196,25 @@ export default function Home() {
     setConnecting(true);
     setConnectMsg(null);
     try {
-      const s = await signIn();
-      localStorage.setItem(SESSION_KEY, JSON.stringify(s));
-      setSession(s);
-      setAccount(await fetchAccount(s.token));
+      setWallet(await connectWallet());
     } catch (e) {
-      setConnectMsg(friendlyError(String((e as Error).message), online));
+      setConnectMsg(friendlyError(String((e as Error).message), null));
     } finally {
       setConnecting(false);
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem(SESSION_KEY);
-    setSession(null);
-    setAccount(null);
+  const clearWallet = () => {
+    setWallet(null);
+    setConnectMsg('Wallet cleared from Kora. Your wallet app remains securely connected to your browser.');
   };
 
   const noteText =
-    session && account
-      ? `Signed in as ${shortAddress(account.address)}. Persisted demo account on the Kora local API — graph v${account.graphVersion}, ${account.runs} analyses, ${account.offers} offers, ${account.receipts} receipts on record. No real money moved.`
+    wallet
+      ? `Wallet connected as ${shortAddress(wallet.address)}${wallet.chainId === 84532 ? ' on Base Sepolia' : ` on chain ${wallet.chainId}`}. This public workspace is a safe simulation: it will not request signatures, submit transactions or move funds.`
       : connectMsg
         ? connectMsg
-        : online === false
-          ? 'Backend offline at localhost:4001 — the demo runs in your browser this session only.'
-          : 'Sample data · Changes last for this session only. Live payments and AI connections are not enabled.';
+        : 'Public demo · No wallet required. Sample business data and changes stay in this browser session; no real money moves.';
 
   return (
     <>
@@ -356,19 +339,17 @@ export default function Home() {
               <span>Ade & Co. / Lagos, NG</span>
               <div className="head-right">
                 <button
-                  className={session ? 'connect on' : 'connect'}
-                  onClick={session ? signOut : connect}
+                  className={wallet ? 'connect on' : 'connect'}
+                  onClick={wallet ? clearWallet : connect}
                   disabled={connecting}
                 >
-                  {connecting ? 'Connecting…' : session ? 'Synced' : 'Connect wallet'}
+                  {connecting ? 'Connecting…' : wallet ? 'Connected' : 'Connect wallet'}
                 </button>
                 <small>
-                  <i className={session ? 'pulse' : 'dot'} aria-hidden="true" />
-                  {session
-                    ? shortAddress(session.address) + ' · 84532'
-                    : online === false
-                      ? 'DEMO · OFFLINE'
-                      : 'SAMPLE BUSINESS DATA'}
+                  <i className={wallet ? 'pulse' : 'dot'} aria-hidden="true" />
+                  {wallet
+                    ? `${shortAddress(wallet.address)} · ${wallet.chainId === 84532 ? 'BASE SEPOLIA' : `CHAIN ${wallet.chainId}`}`
+                    : 'PUBLIC DEMO · NO WALLET REQUIRED'}
                 </small>
               </div>
             </div>

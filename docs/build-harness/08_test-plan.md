@@ -35,5 +35,5 @@ Expected: typecheck/build/lint exit 0 and 79 tests pass.
 ## Gaps
 
 - P0: public Base Sepolia end-to-end receipt/reconciliation test.
-- P1: browser wallet end-to-end test, Vercel smoke test, CI workflow, production dependency audit.
+- P1: browser wallet-extension end-to-end test, CI workflow, production dependency audit.
 - P2: performance/recovery testing and multi-tenant isolation tests.

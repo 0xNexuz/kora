@@ -7,6 +7,11 @@ export interface Session {
   address: string;
 }
 
+export interface ConnectedWallet {
+  address: string;
+  chainId: number;
+}
+
 export interface KoraAccount {
   address: string;
   business: string;
@@ -22,6 +27,8 @@ export interface KoraAccount {
 
 interface EthProvider {
   request(opts: {method: string; params?: unknown[]}): Promise<unknown>;
+  on?(event: 'accountsChanged' | 'chainChanged', listener: (...args: unknown[]) => void): void;
+  removeListener?(event: 'accountsChanged' | 'chainChanged', listener: (...args: unknown[]) => void): void;
 }
 
 declare global {
@@ -75,6 +82,26 @@ function hexMessage(message: string) {
   return '0x' + Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+export async function connectWallet(): Promise<ConnectedWallet> {
+  const ethereum = window.ethereum;
+  if (!ethereum) throw new Error('NO_WALLET');
+  const accounts = (await ethereum.request({method: 'eth_requestAccounts'})) as string[];
+  const address = accounts[0];
+  if (!address) throw new Error('NO_ACCOUNT');
+  const chain = await ethereum.request({method: 'eth_chainId'});
+  return {address, chainId: Number(chain)};
+}
+
+export async function restoreWallet(): Promise<ConnectedWallet | null> {
+  const ethereum = window.ethereum;
+  if (!ethereum) return null;
+  const accounts = (await ethereum.request({method: 'eth_accounts'})) as string[];
+  const address = accounts[0];
+  if (!address) return null;
+  const chain = await ethereum.request({method: 'eth_chainId'});
+  return {address, chainId: Number(chain)};
+}
+
 export async function signIn(): Promise<Session> {
   const ethereum = window.ethereum;
   if (!ethereum) throw new Error('NO_WALLET');
@@ -122,7 +149,8 @@ export function friendlyError(code: string, online: boolean | null) {
     return 'Backend offline at localhost:4001 — demo runs in your browser.';
   }
   const map: Record<string, string> = {
-    NO_WALLET: 'No wallet extension found. Install one (e.g. MetaMask) to try real sign-in.',
+    NO_WALLET: 'No browser wallet was found. You can still use every part of the public demo.',
+    NO_ACCOUNT: 'No wallet account was selected. The public demo still works without one.',
     WRONG_WALLET:
       'Connected wallet is not the demo owner (' + ownerShort + '). Use that wallet to sign.',
     WRONG_CHAIN: 'Switch your wallet to Base Sepolia (84532) and retry.',

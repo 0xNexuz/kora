@@ -15,7 +15,9 @@
 
 ## UI and README accuracy
 
-The public UI must label fictional figures as sample/demo data and must not imply a financing offer or completed Base settlement. A verified transaction may be labeled REAL — TESTNET only after the repository stores its chain ID, contract, transaction hash, block, and explorer URL.
+The public UI labels fictional figures as sample/demo data and does not imply a financing offer or completed Base settlement. The browser demo is backend-independent and wallet-optional. Its wallet control reads only the visitor's public address and chain; it does not request a signature or transaction. A verified transaction may be labeled REAL — TESTNET only after the repository stores its chain ID, contract, transaction hash, block, and explorer URL.
+
+Public visitor wallet connection: **REAL — BROWSER / DEMO-ONLY**. Production build verified; interactive wallet-extension E2E remains UNVERIFIED.
 
 ## P0
 

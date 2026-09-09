@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="8" fill="#a12820"/><text x="17" y="48" font-family="Georgia,serif" font-size="51" font-weight="bold" fill="#f3efe4">k</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#a12820"/>
+  <path d="M11 12h12v18l15-18h15L34 33l20 19H38L23 37v15H11z" fill="#f3efe4"/>
+  <circle cx="51" cy="12" r="7" fill="#ee6a32"/>
+  <path d="M51 7v10M46 12h10M47.5 8.5l7 7M54.5 8.5l-7 7" stroke="#171e16" stroke-width="1.7" stroke-linecap="round"/>
+</svg>
