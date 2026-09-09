@@ -9,17 +9,14 @@
    - Symbol: `ETH`
    - Explorer: `https://sepolia.basescan.org`
 
-3. **Import the demo wallet**: MetaMask logo → **Import account**, paste this private key:
-   `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+3. **Create or select a disposable test-only wallet.** Never paste a seed phrase or private key into Kora, and never use a wallet that holds mainnet funds.
 
-   > Testnet only — never send real funds to this wallet.
-
-4. **Make sure Base Sepolia is the selected network** in MetaMask (the demo wallet must be active).
+4. **Make sure Base Sepolia is selected** and the wallet you want to authorize is active.
 
 5. **Start the backend** (PowerShell):
 
    ```powershell
-   $env:KORA_OWNER = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+   $env:KORA_OWNER = "0xYOUR_TEST_WALLET_ADDRESS"
    node --experimental-transform-types backend/server.ts
    ```
 
@@ -33,4 +30,4 @@
 
 7. Open `http://localhost:3000` → **Workspace** → **Connect wallet** → approve the signature in MetaMask.
 
-**Success** = the header flips to `0xf39F…2266` and the footer shows the persisted account (graph ID `adas-pharmacy`, version 1, runs 0). If the signature prompt doesn't appear, the API isn't running or the wrong network/wallet is selected.
+**Success** = the header shows the connected address and the footer shows the persisted account (graph ID `adas-pharmacy`). If the signature prompt does not appear, the API is not running or the wrong network/wallet is selected.

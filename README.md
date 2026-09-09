@@ -4,18 +4,20 @@ From fragments to flow. The AI financial operating system for African businesses
 
 Kora connects business activity into a private Business Graph, uses deterministic financial skills to analyze cash flow and simulate decisions, and prepares contextual working-capital actions with explicit human approval.
 
+Live frontend: https://kora-weld-two.vercel.app
+
 ## Development snapshot
 
 This repository contains work in progress, not a production financial service.
 
 - **DEMO:** Existing landing page and workspace use fictional business data. The workspace now also offers an optional, explicitly labeled wallet sign-in ("Connect wallet") that exercises the local API — challenge, EIP-191 signature, session and a persisted demo account. It degrades to the in-browser demo if the local API is offline.
-- **IMPLEMENTED, verification pending:** Local encrypted SQLite store, financial graph, twelve financial skills, scenario analysis, evidence-backed recommendations, policy checks, approval API and wallet signing console.
+- **VERIFIED — LOCAL:** Local encrypted SQLite store, financial graph, twelve financial skills, scenario analysis, evidence-backed recommendations, policy checks, approval API and wallet signing console. On 2026-09-08, typecheck, lint, production build and 79 tests passed.
 - **SIMULATED:** Ada's Pharmacy cash flows, sales assumptions, financing need and NGN/USDC conversion assumptions. No real customer or traction is represented.
 - **IMPLEMENTED, not deployed:** Solidity financing contract and Base Sepolia transaction preparation/receipt verification. No real testnet deployment, financing or repayment is claimed by this snapshot.
-- **PLANNED:** Full end-to-end integration, automated security suite, production authorization/key management, live business connectors and hosted backend.
+- **PLANNED:** Public testnet evidence, production authorization/key management, live business connectors and a durable hosted backend.
 - **HERO IMPLEMENTED:** Three floating Kora mascots replace the original portrait, with desktop pointer parallax, independent animation timing, pause controls and reduced-motion support. Original concepts are archived under `design/mascot-concepts`.
 
-The frontend built successfully before the latest backend additions. The combined snapshot has not yet passed a complete build, typecheck or security audit. Dependency audit findings remain to be triaged.
+The full truth table and release audit live in `docs/build-harness/`. A public Base Sepolia settlement and repayment receipt remain required before Kora can claim a verified testnet loop.
 
 ## Local development
 
@@ -43,15 +45,14 @@ The signing console requires a connected browser wallet on Base Sepolia (chain I
 
 The landing page's "Connect wallet" button proves the backend round trip (challenge → wallet signature → session → persisted `/v1/account`). The page reads the expected owner and chain from the challenge response, so any `KORA_OWNER` works.
 
-1. Import a demo wallet into your browser wallet (e.g. MetaMask) and add Base Sepolia (chain ID `84532`, RPC `https://sepolia.base.org`).
-2. Start the backend with that wallet as owner:
+1. Create or select a disposable test-only browser wallet and add Base Sepolia (chain ID `84532`, RPC `https://sepolia.base.org`). Never paste a seed phrase or private key into Kora.
+2. Start the backend with that public wallet address as owner:
 
    ```powershell
-   $env:KORA_OWNER = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+   $env:KORA_OWNER = "0xYOUR_TEST_WALLET_ADDRESS"
    node --experimental-transform-types backend/server.ts
    ```
 
-   Demo wallet private key (Anvil key #0 — testnet only, never add funds): `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 3. `npm run dev`, open the workspace and click "Connect wallet". Select the demo wallet in the signature prompt. The header flips to the connected address and the footnote shows the persisted account counts. Use your own address instead by setting `KORA_OWNER` to it.
 
 ## Structure

@@ -16,6 +16,16 @@ import {
 
 const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
 const INFLOW = [48, 62, 55, 77, 66, 91];
+const PROOF_LOOP = [
+  ['Business Data', 'SIMULATED', 'Fictional Ada’s Pharmacy records with validated evidence hashes.'],
+  ['Understand', 'REAL — LOCAL', 'Typed cash-flow and obligation skills; no prompt arithmetic.'],
+  ['Simulate', 'REAL — LOCAL', 'Baseline, late-invoice and 20% sales-decline scenarios.'],
+  ['Decide', 'REAL — LOCAL', 'Traceable recommendation, assumptions, risks and policy version.'],
+  ['Finance', 'PARTIAL', 'Smaller cash-plus-facility terms require explicit human approval.'],
+  ['Base Settlement', 'PARTIAL', 'Contract and receipt verifier exist; public testnet receipt is still required.'],
+  ['Repay', 'REAL — LOCAL', 'Exact repayment bounds pass on the private EVM lifecycle.'],
+  ['Updated History', 'PARTIAL', 'Reconciliation code links repayment to graph history after a verified receipt.'],
+] as const;
 
 function fmtNgn(v: number) {
   return '₦' + v.toLocaleString('en-NG');
@@ -465,13 +475,46 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="section proof-section" id="proof">
+          <div className="heading" data-reveal>
+            <div>
+              <p className="eyebrow">03 / THE EVIDENCE LOOP</p>
+              <h2>
+                One decision.
+                <br />
+                <em>Proven end to end.</em>
+              </h2>
+            </div>
+            <p>
+              Kora separates working mechanisms from claims that still need public network evidence.
+              Nothing is marked testnet-verified without a real receipt.
+            </p>
+          </div>
+          <ol className="proof-loop" aria-label="Kora end-to-end evidence path">
+            {PROOF_LOOP.map(([name, status, detail], index) => (
+              <li key={name} data-reveal style={{transitionDelay: index * 55 + 'ms'}}>
+                <span className="proof-index">{String(index + 1).padStart(2, '0')}</span>
+                <small className={status.startsWith('UNVERIFIED') ? 'blocked' : ''}>{status}</small>
+                <h3>{name}</h3>
+                <p>{detail}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="proof-footer">
+            <span>Business Data → Understand → Simulate → Decide → Finance → Base Settlement → Repay → Updated Business History</span>
+            <a href="https://github.com/0xNexuz/kora/tree/main/docs/build-harness">
+              Inspect the evidence ↗
+            </a>
+          </div>
+        </section>
+
         <section className="section capital" id="capital">
           <div className="big-star" aria-hidden="true" data-reveal>
             ✳
           </div>
           <div>
             <p className="eyebrow" data-reveal>
-              03 / THE NEXT CHAPTER
+              04 / THE NEXT CHAPTER
             </p>
             <h2 data-reveal style={{transitionDelay: '70ms'}}>
               Your business has a story.

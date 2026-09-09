@@ -1,4 +1,4 @@
-const KORA_URL = 'http://127.0.0.1:4001';
+const KORA_URL = (process.env.NEXT_PUBLIC_KORA_API_URL || 'http://127.0.0.1:4001').replace(/\/$/, '');
 const KORA_OWNER = '0x7034af41397893321c4458abb3b98f6c67065fab';
 const BASE_SEPOLIA_CHAIN = 84532;
 
