@@ -11,7 +11,7 @@ Live frontend: https://kora-weld-two.vercel.app
 This repository contains work in progress, not a production financial service.
 
 - **PUBLIC DEMO:** The landing page and interactive workspace use fictional business data and work entirely in the browser. No account, backend or wallet is required. Any visitor with an injected browser wallet can optionally connect it; the public demo does not request a signature, submit a transaction or move funds.
-- **VERIFIED — LOCAL:** Local encrypted SQLite store, financial graph, twelve financial skills, scenario analysis, evidence-backed recommendations, policy checks, approval API and wallet signing console. On 2026-09-08, typecheck, lint, production build and 79 tests passed.
+- **VERIFIED — LOCAL:** Local encrypted SQLite store, financial graph, twelve financial skills, scenario analysis, evidence-backed recommendations, policy checks, approval API and wallet signing console. On 2026-09-10, lint, typecheck, 82 tests and the Vercel production build passed.
 - **SIMULATED:** Ada's Pharmacy cash flows, sales assumptions, financing need and NGN/USDC conversion assumptions. No real customer or traction is represented.
 - **IMPLEMENTED, not deployed:** Solidity financing contract and Base Sepolia transaction preparation/receipt verification. No real testnet deployment, financing or repayment is claimed by this snapshot.
 - **PLANNED:** Public testnet evidence, production authorization/key management, live business connectors and a durable hosted backend.
@@ -51,7 +51,7 @@ The restricted challenge/signature flow and real transaction preparation remain 
 
 ### Vercel deployment
 
-Import `https://github.com/0xNexuz/kora` into Vercel, keep the detected Next.js settings and deploy. No environment variable is required for the public browser demo. Only set `NEXT_PUBLIC_KORA_API_URL` when a separately hosted, allowlisted Kora backend exists; do not point a public deployment at `localhost`.
+Import `https://github.com/0xNexuz/kora` into Vercel, keep the detected Next.js settings and deploy. Every Vercel release is gated on linting, type checks, the full test suite and the production build. No environment variable is required for the public browser demo. Only set `NEXT_PUBLIC_KORA_API_URL` when a separately hosted, allowlisted Kora backend exists; do not point a public deployment at `localhost`.
 
 ## Structure
 
