@@ -15,7 +15,8 @@
 |---|---|---|
 | Public repository | VERIFIED | https://github.com/0xNexuz/kora |
 | Live app | VERIFIED | https://kora-weld-two.vercel.app |
-| Public browser demo | VERIFIED BUILD | Backend-independent workspace; wallet optional and demo-only |
+| Public browser demo | VERIFIED | Backend-independent workspace; wallet optional and demo-only |
+| Release gate | VERIFIED | Lint + typecheck + 82 tests + production build on every Vercel deployment |
 | Full finance loop | PARTIAL | Local API/contract console; public settlement evidence missing |
 | Base network deployment | P0 MISSING | Execute Sepolia lifecycle |
 | Architecture and security | VERIFIED DOCUMENTED | this harness |
@@ -27,17 +28,16 @@
 2. Open the live UI and inspect the eight-step evidence loop.
 3. Run the Ada inventory question and adverse scenarios.
 4. Inspect exact recommendation/policy/approval.
-5. Inspect Base deployment, draw, repayment, and graph-update evidence.
-6. Run `npm run typecheck && npm test && npm run build`.
+5. Inspect the clearly labeled Base execution boundary.
+6. Review the repository evidence and automated Vercel release result.
 
 ## Gaps
 
-- P0: verified Base Sepolia lifecycle and updated history evidence.
-- P0: durable hosted API if the public deployment is expected to execute the loop.
-- P1: concise recorded demo, CI, browser wallet E2E, dependency audit record.
+- P0 for a verified onchain claim: Base Sepolia lifecycle and updated-history evidence.
+- Conditional P0: durable hosted API if the public deployment is expected to execute the real financing loop.
+- P1: concise recorded demo, browser wallet E2E, dependency audit record.
 - P2: SDK extraction, performance/recovery testing.
-- P3: optional visual polish only after P0/P1.
 
 ## Gate
 
-Status: **NOT READY** for a claim of a fully verified Base loop. The application narrative and local mechanism are credible; the exact next action is to fund the authorized test wallet, run the approval console through repayment, and commit RPC-derived evidence.
+Status: **READY TO SUBMIT as an honestly labeled prototype. NOT READY to claim a fully verified Base loop.** The product mechanism and public demo are credible; the next proof step is to fund the authorized test wallet, run the approval console through repayment, and commit RPC-derived evidence.
