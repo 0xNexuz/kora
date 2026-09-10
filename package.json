@@ -9,7 +9,7 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "build:vercel": "next build",
-    "vercel-build": "next build",
+    "vercel-build": "npm run lint && npm run typecheck && npm test && next build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
