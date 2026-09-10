@@ -13,7 +13,7 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node --experimental-transform-types --test \"backend/*.test.ts\"",
+    "test": "node --experimental-transform-types --test \"backend/*.test.ts\" \"lib/*.test.ts\"",
     "typecheck": "tsc -p backend/tsconfig.json"
   },
   "dependencies": {
