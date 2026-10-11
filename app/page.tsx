@@ -19,10 +19,10 @@ const PROOF_LOOP = [
   ['Understand', 'REAL — LOCAL', 'Typed cash-flow and obligation skills; no prompt arithmetic.'],
   ['Simulate', 'REAL — LOCAL', 'Baseline, late-invoice and 20% sales-decline scenarios.'],
   ['Decide', 'REAL — LOCAL', 'Traceable recommendation, assumptions, risks and policy version.'],
-  ['Finance', 'PARTIAL', 'Smaller cash-plus-facility terms require explicit human approval.'],
-  ['Base Settlement', 'PARTIAL', 'Contract and receipt verifier exist; public testnet receipt is still required.'],
-  ['Repay', 'REAL — LOCAL', 'Exact repayment bounds pass on the private EVM lifecycle.'],
-  ['Updated History', 'PARTIAL', 'Reconciliation code links repayment to graph history after a verified receipt.'],
+  ['Finance', 'REAL — TESTNET', 'Smaller cash-plus-facility terms bound to salted commitments and human approval.'],
+  ['Base Settlement', 'REAL — TESTNET', 'Live contract on Base Sepolia (0xad17...febb) with verified onchain receipts.'],
+  ['Repay', 'REAL — TESTNET', 'USDC repayment confirmed on Base Sepolia with verified event logs.'],
+  ['Updated History', 'REAL — TESTNET', 'Receipt reconciliation atomically updates the Business Financial Twin.'],
 ] as const;
 
 function fmtNgn(v: number) {
@@ -483,9 +483,17 @@ export default function Home() {
           </ol>
           <div className="proof-footer">
             <span>Business Data → Understand → Simulate → Decide → Finance → Base Settlement → Repay → Updated Business History</span>
-            <a href="https://github.com/0xNexuz/kora/tree/main/docs/build-harness">
-              Inspect the evidence ↗
-            </a>
+            <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
+              <a href="https://sepolia.basescan.org/address/0xad177afed1593291d872cfe2b3ac984f9cc3febb" target="_blank" rel="noopener noreferrer">
+                BaseScan contract ↗
+              </a>
+              <a href="https://github.com/0xNexuz/kora/blob/main/docs/TESTING.md" target="_blank" rel="noopener noreferrer">
+                How to test ↗
+              </a>
+              <a href="https://github.com/0xNexuz/kora/tree/main/docs/build-harness">
+                Evidence harness ↗
+              </a>
+            </div>
           </div>
         </section>
 
@@ -515,8 +523,7 @@ export default function Home() {
                 <br />○ Business verification and lender review needed
               </p>
               <small>
-                Illustrative checklist, not a financing offer. Base settlement and lender connections
-                are planned integrations.
+                Illustrative checklist. Bilateral working-capital facility contract is verified on Base Sepolia with onchain USDC settlement.
               </small>
             </details>
           </div>
