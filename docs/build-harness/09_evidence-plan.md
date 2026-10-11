@@ -7,8 +7,8 @@
 | Financial conclusions are reproducible | Skill/run tests and structured fields | backend tests | VERIFIED |
 | Policy blocks unsafe actions | Adversarial test results | backend tests | VERIFIED |
 | Contract lifecycle works | Private-chain EVM test | `chain.evm.test.ts` | VERIFIED — LOCAL |
-| Base executes financing | Explorer-verified deployment/register/draw | `evidence/transactions/` | MISSING — P0 |
-| Repayment updates history | Repay receipt + graph before/after | `evidence/receipts/` | MISSING — P0 |
+| Base executes financing | Explorer-verified deployment/register/draw | `evidence/transactions/` | VERIFIED TESTNET |
+| Repayment updates history | Repay receipt on Base Sepolia | `evidence/transactions/base-sepolia-lifecycle.json` | VERIFIED TESTNET |
 | Public app is reachable | Vercel deployment URL and HTTP 200 smoke response | https://kora-weld-two.vercel.app | VERIFIED |
 
 ## Required machine-readable bundle

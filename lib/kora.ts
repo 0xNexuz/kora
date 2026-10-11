@@ -83,7 +83,7 @@ function hexMessage(message: string) {
 }
 
 export async function connectWallet(): Promise<ConnectedWallet> {
-  const ethereum = window.ethereum;
+  const ethereum = typeof window !== 'undefined' ? window.ethereum : undefined;
   if (!ethereum) throw new Error('NO_WALLET');
   const accounts = (await ethereum.request({method: 'eth_requestAccounts'})) as string[];
   const address = accounts[0];
@@ -93,7 +93,7 @@ export async function connectWallet(): Promise<ConnectedWallet> {
 }
 
 export async function restoreWallet(): Promise<ConnectedWallet | null> {
-  const ethereum = window.ethereum;
+  const ethereum = typeof window !== 'undefined' ? window.ethereum : undefined;
   if (!ethereum) return null;
   const accounts = (await ethereum.request({method: 'eth_accounts'})) as string[];
   const address = accounts[0];
@@ -103,7 +103,7 @@ export async function restoreWallet(): Promise<ConnectedWallet | null> {
 }
 
 export async function signIn(): Promise<Session> {
-  const ethereum = window.ethereum;
+  const ethereum = typeof window !== 'undefined' ? window.ethereum : undefined;
   if (!ethereum) throw new Error('NO_WALLET');
   const online = await probe();
   if (!online.online) throw new Error('BACKEND_OFFLINE');

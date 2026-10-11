@@ -1,0 +1,12 @@
+{
+  "chainId": 84532,
+  "address": "0xad177afed1593291d872cfe2b3ac984f9cc3febb",
+  "transactionHash": "0xe21235d2f9f99ed6a4a06d2333833b5e0f9a7ced44950159423affdea55b5cc0",
+  "blockNumber": "47772811",
+  "blockHash": "0x0c1ef0f87a5f2a7cff716fd500c0ad28c6c863ed2731714f7fddfa6d03f34741",
+  "explorer": "https://sepolia.basescan.org/tx/0xe21235d2f9f99ed6a4a06d2333833b5e0f9a7ced44950159423affdea55b5cc0",
+  "contractExplorer": "https://sepolia.basescan.org/address/0xad177afed1593291d872cfe2b3ac984f9cc3febb",
+  "status": "REAL — TESTNET",
+  "deployedAt": "2026-10-06T19:11:49.444Z",
+  "deployer": "0xF6D3809d67238EC39a6350b2D7445B53Ab896BBb"
+}

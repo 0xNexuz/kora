@@ -71,7 +71,7 @@ export function createHandler(store: Store, service: Service, opts: HandlerOptio
       if (path === '/v1/auth/verify' && req.method === 'POST') return send(await service.authenticate(String(body.id), String(body.signature) as Hex, Number(body.chainId)));
       const token = req.headers.authorization?.replace(/^Bearer /, '') ?? '';
       service.session(token);
-      if (path === '/v1/config' && req.method === 'GET') return send({ owner: OWNER, chainId: CHAIN, deployment: store.get('deployment', 'active'), mode: 'DEMO_BUSINESS_REAL_TESTNET_SETTLEMENT' });
+      if (path === '/v1/config' && req.method === 'GET') return send({ owner: service.owner, chainId: CHAIN, deployment: store.get('deployment', 'active'), mode: 'DEMO_BUSINESS_REAL_TESTNET_SETTLEMENT' });
       if (path === '/v1/graph' && req.method === 'GET') return send(service.graph());
       if (path === '/v1/account' && req.method === 'GET') return send(service.account());
       if (path === '/v1/skills' && req.method === 'GET') return send(Object.keys(SKILLS).map(name => ({ name, version: '1.0.0', readOnly: true, input: 'SkillContext', error: 'KoraError.code' })));
@@ -81,7 +81,7 @@ export function createHandler(store: Store, service: Service, opts: HandlerOptio
       if (path === '/v1/offers' && req.method === 'GET') return send(store.list('offer'));
       if (path === '/v1/deployment/prepare' && req.method === 'POST') return send(service.deployment());
       if (path === '/v1/deployment/verify' && req.method === 'POST') return send(await service.registerDeployment(String(body.transactionHash) as Hex));
-      if (path === '/v1/wallet' && req.method === 'GET') return send(await wallet(OWNER));
+      if (path === '/v1/wallet' && req.method === 'GET') return send(await wallet(service.owner));
       if (path === '/v1/receipts' && req.method === 'GET') return send(store.list('receipt'));
       if (path === '/v1/audit' && req.method === 'GET') return send({ verifiedHead: store.verifyAudit() });
       const match = path.match(/^\/v1\/offers\/(0x[a-f0-9]{64})\/(approval|approve|prepare|reconcile)$/);

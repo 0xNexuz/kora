@@ -13,8 +13,21 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node --experimental-transform-types --test \"backend/*.test.ts\" \"lib/*.test.ts\"",
-    "typecheck": "tsc -p backend/tsconfig.json"
+    "test": "node --experimental-transform-types --test \"backend/*.test.ts\" \"lib/*.test.ts\" \"sdk/*.test.ts\"",
+    "typecheck": "tsc -p backend/tsconfig.json && tsc -p sdk/tsconfig.json",
+    "deploy:base-sepolia": "node --use-system-ca scripts/deploy-base-sepolia.mjs",
+    "lifecycle:base-sepolia": "node --use-system-ca scripts/execute-lifecycle.mjs",
+    "test-drive": "node --use-system-ca scripts/test-drive.mjs",
+    "testnet-demo": "node --use-system-ca scripts/testnet-demo.mjs",
+    "cli": "node --use-system-ca bin/kora.mjs",
+    "console": "node --experimental-transform-types backend/server.ts",
+    "server": "node --experimental-transform-types backend/server.ts"
+  },
+  "bin": {
+    "kora": "./bin/kora.mjs"
+  },
+  "exports": {
+    "./sdk": "./sdk/index.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

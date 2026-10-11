@@ -9,9 +9,9 @@
 | Simulate | REAL — LOCAL | Baseline/adverse forecasts; tests | Hosted execution evidence |
 | Decide | REAL — LOCAL | Structured recommendation and policy tests | Real business validation |
 | Finance | REAL — LOCAL / PARTIAL | Offer/approval/contract private-chain lifecycle | Real lender capital and public agreement |
-| Base Settlement | IMPLEMENTED, UNVERIFIED | Base Sepolia transaction preparation and verifier | Contract address and explorer transactions |
-| Repay | REAL — LOCAL / UNVERIFIED TESTNET | Private-chain repayment test | Base Sepolia repayment receipt |
-| Updated Business History | PARTIAL | Reconciliation code increments graph and stores receipt-linked performance | Public testnet end-to-end evidence |
+| Base Settlement | REAL — TESTNET | KoraFacility deployed at `0xad177afed1593291d872cfe2b3ac984f9cc3febb`; terms registered (`0xac810af6...`); principal drawn (`0x665b5623...`) | None |
+| Repay | REAL — TESTNET | Repayment confirmed onchain (tx: `0xfea6ac39d6b73f8ec657e6ebf918a87b91b87bb5cf6c877baf0bcac7877b2c04`, block: 47773321) | None |
+| Updated Business History | REAL — TESTNET | Lifecycle complete and stored in `evidence/transactions/base-sepolia-lifecycle.json` | None |
 
 ## UI and README accuracy
 
@@ -21,4 +21,4 @@ Public visitor wallet connection: **REAL — BROWSER / DEMO-ONLY**. Production b
 
 ## P0
 
-Execute and capture the Base Sepolia agreement lifecycle, then reconcile the repayment into graph version 2+.
+Base Sepolia deployment, agreement registration, draw, and repayment lifecycle are **COMPLETE and VERIFIED ONCHAIN**. All RPC-derived receipts are recorded in `evidence/transactions/`.

@@ -4,7 +4,6 @@ import {afterEach, test} from 'node:test';
 import {connectWallet, friendlyError, restoreWallet} from './kora.ts';
 
 const originalWindow = globalThis.window;
-const testGlobal = globalThis as typeof globalThis & {window?: Window};
 
 function provide(
   request: (options: {method: string; params?: unknown[]}) => Promise<unknown>,
@@ -17,7 +16,7 @@ function provide(
 
 afterEach(() => {
   if (originalWindow === undefined) {
-    delete testGlobal.window;
+    Reflect.deleteProperty(globalThis, 'window');
     return;
   }
   Object.defineProperty(globalThis, 'window', {
@@ -63,7 +62,7 @@ test('wallet restoration is passive and never prompts the visitor', async () => 
 });
 
 test('missing wallet reports an actionable public-demo message', async () => {
-  delete testGlobal.window;
+  Reflect.deleteProperty(globalThis, 'window');
   await assert.rejects(connectWallet(), /NO_WALLET/);
   assert.match(friendlyError('NO_WALLET', null), /public demo/i);
 });

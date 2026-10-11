@@ -2,12 +2,13 @@
 
 ## Program
 
-- Base Batches 004 — https://www.base.org/batches
-- Organizer: Base Ecosystem Fund.
-- Applications: Aug 19–Sep 9, 2026. Closing timezone is **UNVERIFIED**.
-- Fit: Base-first early-stage financing and agent infrastructure.
-- Offer: selected teams are offered a $100K investment subject to diligence; this is not a guaranteed grant.
-- Judging weights: **UNKNOWN**.
+- Colosseum: Crypto World's Fair — https://colosseum.com/
+- Organizer: Colosseum.
+- Dates: September 14 – October 12, 2026 (Global Online Hackathon).
+- Multichain Scope: Cross-ecosystem hackathon with dedicated tracks including Base Sponsor Track, AI, and Payments/DeFi.
+- Offer: $800K+ in track prizes, $2.5M+ venture funding, and all winning teams interviewed for the $250K Colosseum Accelerator.
+- Primary Track: Base Ecosystem Track / Payments & Commerce / AI Solutions.
+- Judging Focus: Business viability, product execution & working MVP, team composition, presentation & pitch deck, onchain integration.
 
 ## Requirements/evidence
 
@@ -17,8 +18,8 @@
 | Live app | VERIFIED | https://kora-weld-two.vercel.app |
 | Public browser demo | VERIFIED | Backend-independent workspace; wallet optional and demo-only |
 | Release gate | VERIFIED | Lint + typecheck + 82 tests + production build on every Vercel deployment |
-| Full finance loop | PARTIAL | Local API/contract console; public settlement evidence missing |
-| Base network deployment | P0 MISSING | Execute Sepolia lifecycle |
+| Full finance loop | VERIFIED TESTNET | Deployed, registered, drawn, and repaid on Base Sepolia (`evidence/transactions/base-sepolia-lifecycle.json`) |
+| Base network deployment | VERIFIED TESTNET | Deployed to Base Sepolia at `0xad177afed1593291d872cfe2b3ac984f9cc3febb` (`evidence/transactions/base-sepolia-deployment.json`) |
 | Architecture and security | VERIFIED DOCUMENTED | this harness |
 | Application confirmation | UNVERIFIED | founder must submit/confirm |
 
@@ -29,15 +30,15 @@
 3. Run the Ada inventory question and adverse scenarios.
 4. Inspect exact recommendation/policy/approval.
 5. Inspect the clearly labeled Base execution boundary.
-6. Review the repository evidence and automated Vercel release result.
+6. Verify onchain BaseScan deployment and lifecycle transaction receipts.
+7. Review the repository evidence and automated Vercel release result.
 
 ## Gaps
 
-- P0 for a verified onchain claim: Base Sepolia lifecycle and updated-history evidence.
-- Conditional P0: durable hosted API if the public deployment is expected to execute the real financing loop.
-- P1: concise recorded demo, browser wallet E2E, dependency audit record.
+- P1: concise recorded demo video (<3 min) for Colosseum submission.
+- P1: hosted backend deployment on Cloudflare/Render if public interactive loop without local Node server is desired.
 - P2: SDK extraction, performance/recovery testing.
 
 ## Gate
 
-Status: **READY TO SUBMIT as an honestly labeled prototype. NOT READY to claim a fully verified Base loop.** The product mechanism and public demo are credible; the next proof step is to fund the authorized test wallet, run the approval console through repayment, and commit RPC-derived evidence.
+Status: **READY TO SUBMIT WITH VERIFIED BASE ONCHAIN LIFECYCLE**. The contract deployment, terms registration, drawdown, and repayment have been executed and verified on Base Sepolia with confirmed block numbers and hashes. All tests and linters pass 100%.

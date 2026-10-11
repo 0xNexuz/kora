@@ -1,0 +1,25 @@
+{
+  "chainId": 84532,
+  "contract": "0xad177afed1593291d872cfe2b3ac984f9cc3febb",
+  "borrower": "0xF6D3809d67238EC39a6350b2D7445B53Ab896BBb",
+  "agreementId": "0xee0794521637144efa241c345d1222ca8a6c96d8729f2788bb4e9129ea8650aa",
+  "register": {
+    "transactionHash": "0xac810af60bf10fa548af82d3565bf0981da2dd328ff4e1d111d1d3b51a43ce13",
+    "blockNumber": "47773316",
+    "explorer": "https://sepolia.basescan.org/tx/0xac810af60bf10fa548af82d3565bf0981da2dd328ff4e1d111d1d3b51a43ce13"
+  },
+  "draw": {
+    "transactionHash": "0x665b56237a78caacec1c8396dece4969de5732972851d58e54e7d85a6a6329e3",
+    "blockNumber": "47773317",
+    "explorer": "https://sepolia.basescan.org/tx/0x665b56237a78caacec1c8396dece4969de5732972851d58e54e7d85a6a6329e3"
+  },
+  "repay": {
+    "transactionHash": "0xfea6ac39d6b73f8ec657e6ebf918a87b91b87bb5cf6c877baf0bcac7877b2c04",
+    "blockNumber": "47773321",
+    "explorer": "https://sepolia.basescan.org/tx/0xfea6ac39d6b73f8ec657e6ebf918a87b91b87bb5cf6c877baf0bcac7877b2c04",
+    "repaidTotal": "1010000",
+    "complete": true
+  },
+  "executedAt": "2026-10-06T19:28:49.906Z",
+  "status": "REAL — TESTNET"
+}

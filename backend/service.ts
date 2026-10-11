@@ -10,6 +10,7 @@ import type {Offer} from './policy.ts';
 import {deployment,verifyDeployment,verifyReceipt,transaction} from './chain.ts';
 
 type Challenge={message:string;expiresAt:number;used:boolean};
+export type VerifiedReceipt = Awaited<ReturnType<typeof verifyReceipt>>;
 export interface AccountRow{address:string;business:string;graphId:string;graphVersion:number;graphAsOf:number;createdAt:number;lastSeenAt:number;runs:number;offers:number;receipts:number;}
 export class Service {
  store:Store; owner:string; clock:()=>number;
@@ -27,5 +28,47 @@ export class Service {
  approval(id:string){const o=this.getOffer(id);authorizeOffer(o,this.graph(),this.owner,this.clock(),CHAIN);const d=this.store.get<{address:string}>('deployment','active');ensure(d,'DEPLOYMENT_REQUIRED');return {message:approvalMessage(o,d.address),offer:o,contract:d.address};}
  async approve(id:string,signature:Hex,chainId:number){const {message,contract}=this.approval(id);ensure(chainId===CHAIN,'WRONG_CHAIN');ensure(await verifyMessage({address:this.owner as Address,message,signature}),'INVALID_SIGNATURE');return this.store.atomic(()=>{const o=this.getOffer(id);authorizeOffer(o,this.graph(),this.owner,this.clock(),chainId);ensure(o.status==='PROPOSED','APPROVAL_REPLAY');const updated={...o,status:'APPROVED' as const,contract};this.store.replace('offer',id,updated);this.store.insert('approval',id,{message,signature,actor:this.owner,at:this.clock()});this.store.audit({event:'HUMAN_APPROVED',offer:id,messageHash:hash(message),at:this.clock()});return updated;});}
  prepare(id:string,action:'allowance'|'register'|'draw'|'repay',amount?:string){const o=this.getOffer(id);ensure(['APPROVED','REGISTERED','DRAWN'].includes(o.status),'HUMAN_APPROVAL_REQUIRED');if(action!=='repay'&&o.status!=='DRAWN')authorizeOffer(o,this.graph(),this.owner,this.clock(),CHAIN);ensure(this.store.get('approval',id),'HUMAN_APPROVAL_REQUIRED');return transaction(o,action,amount);}
- async reconcile(id:string,tx:Hex){const before=this.getOffer(id);const receipt=await verifyReceipt(before,tx);return this.store.atomic(()=>{const o=this.getOffer(id);ensure(hash(o)===hash(before),'CONCURRENT_CHANGE');ensure(!this.store.get('receipt',receipt.id),'DUPLICATE_REPAYMENT');this.store.insert('receipt',receipt.id,receipt);if(receipt.event==='Registered')o.status='REGISTERED';if(receipt.event==='Drawn')o.status='DRAWN';if(receipt.event==='Repaid'){o.repaid=receipt.total;if(receipt.complete)o.status='REPAID';const g=this.graph();g.history.push({agreementId:id,receiptId:receipt.id,principalUSDC:o.principal,repaidUSDC:receipt.amount,amountNGN:Number(BigInt(receipt.amount)*BigInt(o.fx.nairaPerUSDC*100)/1000000n),onTime:receipt.timestamp<=o.dueAt,blockNumber:receipt.blockNumber,transactionHash:tx,chainId:CHAIN,mode:'REAL — TESTNET'});g.version++;this.store.replace('graph',g.id,g);}this.store.replace('offer',id,o);this.store.audit({event:'RECEIPT_RECONCILED',receiptId:receipt.id,offer:id,graphHash:hash(this.graph()),at:this.clock()});return {receipt,offer:o,graph:this.graph()};});}
+  async reconcile(id: string, tx: Hex) {
+    const before = this.getOffer(id);
+    const existing = this.store.list<VerifiedReceipt>('receipt').find(r => r.offerId === id && r.transactionHash.toLowerCase() === tx.toLowerCase());
+    if (existing) {
+      return { receipt: existing, offer: before, graph: this.graph() };
+    }
+    const receipt = await verifyReceipt(before, tx);
+    return this.store.atomic(() => {
+      const o = this.getOffer(id);
+      ensure(hash(o) === hash(before), 'CONCURRENT_CHANGE');
+      this.store.insert('receipt', receipt.id, receipt);
+      if (receipt.event === 'Registered') o.status = 'REGISTERED';
+      if (receipt.event === 'Drawn') o.status = 'DRAWN';
+      if (receipt.event === 'Repaid') {
+        o.repaid = receipt.total;
+        if (receipt.complete) o.status = 'REPAID';
+        const g = this.graph();
+        g.history.push({
+          agreementId: id,
+          receiptId: receipt.id,
+          principalUSDC: o.principal,
+          repaidUSDC: receipt.amount,
+          amountNGN: Number(BigInt(receipt.amount) * BigInt(o.fx.nairaPerUSDC * 100) / 1000000n),
+          onTime: receipt.timestamp <= o.dueAt,
+          blockNumber: receipt.blockNumber,
+          transactionHash: tx,
+          chainId: CHAIN,
+          mode: 'REAL — TESTNET'
+        });
+        g.version++;
+        this.store.replace('graph', g.id, g);
+      }
+      this.store.replace('offer', id, o);
+      this.store.audit({
+        event: 'RECEIPT_RECONCILED',
+        receiptId: receipt.id,
+        offer: id,
+        graphHash: hash(this.graph()),
+        at: this.clock()
+      });
+      return { receipt, offer: o, graph: this.graph() };
+    });
+  }
 }

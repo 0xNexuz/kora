@@ -3,7 +3,7 @@
 > **From fragments to flow.**  
 > The AI financial operating system for African businesses, built toward settlement on Base.
 
-[Open the live demo](https://kora-weld-two.vercel.app) · [Explore the evidence harness](./docs/build-harness/00_README.md) · [Review the smart contract](./contracts/KoraFacility.sol)
+[Open the live demo](https://kora-weld-two.vercel.app) · [How to test the app](./docs/TESTING.md) · [Explore the evidence harness](./docs/build-harness/00_README.md) · [Review the smart contract](./contracts/KoraFacility.sol)
 
 Kora turns fragmented bank inflows, POS activity, invoices, supplier obligations, expenses, stablecoin payments and repayment history into traceable financial intelligence, safer operations and contextual access to working capital.
 
@@ -63,11 +63,20 @@ Demo changes are browser-session state and do not represent a real customer or t
 | Business Graph and Financial Twin model | **REAL — LOCAL** | Implemented with an encrypted local SQLite store |
 | Twelve typed financial skills | **REAL — LOCAL** | Deterministic tools with structured evidence |
 | Policy, approval and authorization controls | **REAL — LOCAL** | Implemented and adversarially tested |
-| KoraFacility Solidity contract | **IMPLEMENTED** | Compiled and exercised on a private local EVM |
-| Base Sepolia lifecycle | **PLANNED EVIDENCE** | Code exists; public RPC-derived receipts are not yet claimed |
+| KoraFacility Solidity contract | **DEPLOYED & VERIFIED** | Deployed on Base Sepolia at [`0xad177afed1593291d872cfe2b3ac984f9cc3febb`](https://sepolia.basescan.org/address/0xad177afed1593291d872cfe2b3ac984f9cc3febb) |
+| Base Sepolia lifecycle | **REAL — TESTNET** | Terms registered, principal drawn, and USDC repaid with verified RPC receipts |
 | Live accounting/payment connectors | **PLANNED** | Not represented as available |
 
-A verified Base Sepolia claim requires the real chain ID, contract address, transaction hashes, block numbers, explorer links and reconciled repayment receipt. Kora does not use placeholders as blockchain evidence.
+### Verified Base Sepolia Settlement Proofs
+
+| Lifecycle Step | Transaction Hash | Block | Status |
+|---|---|---|---|
+| **Contract Deployment** | [`0xe21235d2...`](https://sepolia.basescan.org/tx/0xe21235d2f9f99ed6a4a06d2333833b5e0f9a7ced44950159423affdea55b5cc0) | `47772811` | Confirmed |
+| **Agreement Registration** | [`0xac810af6...`](https://sepolia.basescan.org/tx/0xac810af60bf10fa548af82d3565bf0981da2dd328ff4e1d111d1d3b51a43ce13) | `47773316` | Confirmed |
+| **Principal Drawdown** | [`0x665b5623...`](https://sepolia.basescan.org/tx/0x665b56237a78caacec1c8396dece4969de5732972851d58e54e7d85a6a6329e3) | `47773317` | Confirmed |
+| **Full Repayment (USDC)** | [`0xfea6ac39...`](https://sepolia.basescan.org/tx/0xfea6ac39d6b73f8ec657e6ebf918a87b91b87bb5cf6c877baf0bcac7877b2c04) | `47773321` | Confirmed |
+
+Receipt data is recorded in `evidence/transactions/base-sepolia-lifecycle.json`.
 
 ## Architecture
 
@@ -172,12 +181,25 @@ The operator flow requires a browser wallet on Base Sepolia (chain ID `84532`). 
 |---|---|
 | `app/`, `components/`, `public/` | Product frontend, workspace and visual system |
 | `backend/` | Graph, skills, simulations, evidence, policy, approval and reconciliation |
+| `sdk/` | **Kora Developer Kit (`@kora/sdk`)**: Decoupled underwriting engine, AI agent tool adapters, and Base client |
+| `examples/` | Standalone runnable agent scripts (`examples/agent-underwriting.ts`) |
 | `contracts/` | KoraFacility and local TestUSDC test double |
 | `demo/` | Fictional Ada's Pharmacy scenario |
 | `docs/build-harness/` | Threat model, invariants, evidence truth table and submission audit |
 | `evidence/tests/` | Generated local verification artifacts |
 | `design/mascot-concepts/` | Archived Kora mascot concepts |
-| `scripts/` | Contract compilation and supporting utilities |
+| `scripts/` | Contract compilation and deployment utilities |
+
+## Developer Kit (`@kora/sdk`)
+
+Kora exports a decoupled, framework-agnostic developer kit for autonomous AI agents, fintech underwriters, and web3 developers:
+
+- **12 Deterministic Financial Skills**: Pure arithmetic engine for daily cash ladders, stress scenarios, and working capital buffers with zero LLM math hallucinations.
+- **Blinded Privacy Commitments**: Salted SHA-256 commitments (`business`, `obligation`, `evidence`) binding onchain contracts to offchain verified evidence without leaking sensitive balance sheet data.
+- **Base Sepolia EVM Facility Client**: Typed viem wrapper for agreement registration, drawdowns, and repayment verification.
+- **AI Agent Tool Adapters**: Pre-formatted tool definitions and execution dispatchers compatible with OpenAI Function Calling, Anthropic Claude Tool Use, LangChain, and Eliza.
+
+See the [SDK Documentation](./sdk/README.md) and [Runnable Agent Example](./examples/agent-underwriting.ts).
 
 ## Deployment
 
